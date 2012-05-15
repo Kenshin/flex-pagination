@@ -82,10 +82,10 @@ page.pagesize = 6;           //每页显示的数据
 page.offset   = 2;           //偏移量
 page.length   = 8;           //分页的长度
 //标签属性
-page.backLabel     = "<<";   //后滚按钮的显示标签
-page.previousLabel = "<";    //后退按钮的显示标签
-page.nextLabel     = ">";    //前进按钮的显示标签
-page.forwardLabel  = ">>";   //前滚按钮的显示标签
+page.backLabel     = "&lt;&lt;";   //后滚按钮的显示标签
+page.previousLabel = "&lt;";    //后退按钮的显示标签
+page.nextLabel     = "&gt;";    //前进按钮的显示标签
+page.forwardLabel  = "&gt;&gt;";   //前滚按钮的显示标签
 //控制条属性
 page.pageTurnVisible = true; //是否显示前滚/后滚按钮
 page.pageCtrlVisible = true; //是否显示前进/后退按钮
