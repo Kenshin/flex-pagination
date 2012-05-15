@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:HGroup 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+    xmlns:s="library://ns.adobe.com/flex/spark" 
+    xmlns:mx="library://ns.adobe.com/flex/halo"
+	xmlns:pagination="com.ksria.flex.pagination.components.*"
+	creationComplete="buildPagination()"
+>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Metadata>
+		[Event(name="pageTurning", type="com.ksria.flex.pagination.event.PaginationEvent")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import flash.events.MouseEvent;
+			
+			import spark.events.DropDownEvent;
+			import spark.components.Button;
+			
+			import com.ksria.as3.pagination.core.Pagination;
+			import com.ksria.as3.pagination.vo.PaginationVO;
+			import com.ksria.flex.pagination.event.PaginationEvent;
+
+			//--------------------------------------------------------------------------
+			//
+			//  Properties
+			//
+			//--------------------------------------------------------------------------
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _total : int;
+			/**
+			* 总数
+			* 
+			* @default 0
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set total( value : int ) : void { _total = value; }
+			public function get total() : int { return _total; }
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _page : int;
+			/**
+			* 当前页
+			* 
+			* @default 0
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set page( value : int ) : void { _page = value; }
+			public function get page() : int { return _page; }
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _pagesize : int;
+			/**
+			* 每页包含的内容
+			* 
+			* @default 0
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set pagesize( value : int ) : void { _pagesize = value; }
+			public function get pagesize() : int { return _pagesize; }
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _offset : int = 2;
+			/**
+			* 偏移量（例如1 2 3 4 5 6，点击6时，产生4 5 6 7 8 9，而非 7 8 9 10 11 12）
+			* 
+			* @default 2
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set offset( value : int ) : void { _offset = value; }
+			public function get offset() : int { return _offset; }
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _length : int = 6;
+			/**
+			* 步长
+			* 
+			* @default 6
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set length( value : int ) : void { _length = value; }
+			public function get length() : int { return _length; }
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _pv : PaginationVO = new PaginationVO();
+			/**
+			* pagination vo
+			* 
+			* @default null
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set pv( value : PaginationVO ) : void { _pv = value; }
+			public function	get pv() : PaginationVO { return _pv; }
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _backLabel : String = "<<";
+			/**
+			* Back Button Label
+			* 
+			* @default <<
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set backLabel( value : String ) : void { _backLabel = value; }
+			public function get backLabel() : String { return _backLabel; }			
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _previousLabel : String = "Previous";
+			/**
+			* Previous Button Label
+			* 
+			* @default Previous
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set previousLabel( value : String ) : void { _previousLabel = value; }
+			public function get previousLabel() : String { return _previousLabel; }
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _nextLabel : String = "Next";
+			/**
+			* Next Button Label
+			* 
+			* @default Next
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set nextLabel( value : String ) : void { _nextLabel = value; }
+			public function get nextLabel() : String { return _nextLabel; }
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _forwardLabel : String = ">>";
+			/**
+			* Forward Button Label
+			* 
+			* @default Next
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set forwardLabel( value : String ) : void { _forwardLabel = value; }
+			public function get forwardLabel() : String { return _forwardLabel; }
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _pageTurnVisible : Boolean = true;
+			/**
+			* 是否显示翻页组件（backButton 和 forwardButton）
+			* 
+			* @default true
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set pageTurnVisible( value : Boolean ) : void { _pageTurnVisible = value; }
+			public function get pageTurnVisible() : Boolean { return _pageTurnVisible; }
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _pageCtrlVisible : Boolean = true;
+			/**
+			* 是否显示前进/后退（Previous Button 和 Next Button）
+			* 
+			* @default true
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set pageCtrlVisible( value : Boolean ) : void { _pageCtrlVisible = value; }
+			public function get pageCtrlVisible() : Boolean { return _pageCtrlVisible; }
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _advModel : Boolean = false;
+			/**
+			* 是否显示高级模式
+			* <br>高级模式： 1... 6 7 8 9 ...50 
+			* <br>简单模式： 6 7 8 9
+			* 
+			* @default false
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set advModel( value : Boolean ) : void { _advModel = value; }
+			public function get advModel() : Boolean { return _advModel; }
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _pageCmbVisible : Boolean = false;
+			/**
+			* 是否显示Page DorpDownList
+			* 
+			* @default false
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set pageCmbVisible( value : Boolean ) : void { _pageCmbVisible = value; }
+			public function get pageCmbVisible() : Boolean { return _pageCmbVisible; }
+			
+			/**
+			 * @private
+			 */
+			[Bindable] private var _data : Object;
+			/**
+			* 保存的数据
+			* 
+			* @default null
+			* 
+			* @langversion 3.0
+			* @playerversion Flash 9
+			* @playerversion AIR 1.1
+			* @productversion Flex 4.6
+			*/
+			public function set data( value : Object ) : void { _data = value; }
+			public function get data() : Object { return _data; }
+			
+			////////////////////////////////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////////////////////////////////////
+			
+			/**
+			 * biuld pagination
+			 * 
+			 * @private
+			 */
+			private function buildPagination() : void {
+				createPagination( _page );
+			}
+			
+			/**
+			 * create pagination
+			 * 
+			 * @private
+			 * @param	page
+			 */
+			private function createPagination( page : int ) : void {
+				_pv = Pagination.build( _total, page, _pagesize, _offset, _length );
+			}
+			
+			/**
+			 * dispach event
+			 * 
+			 * @private
+			 * @param	page
+			 */
+			private function pagination( page : int ) : void {
+				//page turning
+				createPagination( page );
+				//dispatch event
+				dispatchEvent( new PaginationEvent( PaginationEvent.PAGE_TURNING, page ));
+			}
+			
+			/**
+			 * list click event handler
+			 * 
+			 * @private
+			 * @param	event
+			 */
+			private function listClickHandler( event : MouseEvent ) : void {
+				trace( "event.target.label         = " + event.target.label )
+				pagination( parseInt( event.target.label ));
+			}
+			
+			/**
+			 * pagination click event handler
+			 * 
+			 * @private
+			 * @param	event
+			 */
+			private function paginationClickHandler( event : MouseEvent ) : void {
+				trace( "event.target.name          = " + event.target.name )
+				pagination( parseInt( event.target.name ));
+			}
+			
+			/**
+			 * dropdown list close event handler
+			 * 
+			 * @private
+			 * @param	event
+			 */
+			private function dropdownlistCloseHandler( event : DropDownEvent ) : void {
+				trace( "event.target.selectedIndex = " + event.target.selectedIndex )
+				if ( event.target.selectedIndex != -1 ) pagination( event.target.selectedIndex + 1 );
+			}
+		]]>
+	</fx:Script>
+	
+	<s:HGroup>
+		
+		<pagination:ControlButton 
+			id="btnBack" 
+			name="{ _pv.back }"
+			visible="{ _pageTurnVisible &amp;&amp; _pv.isBack }" 
+			includeInLayout="{ _pageTurnVisible }"
+			label="{ _backLabel }" 
+			click="paginationClickHandler(event)" />
+		
+		<pagination:ControlButton 
+			id="btnPrevious" 
+			name="{ _pv.page - 1 }"
+			visible="{ _pageCtrlVisible &amp;&amp; _pv.isPrevious }"
+			includeInLayout="{ _pageCtrlVisible }"
+			label="{ _previousLabel }" 
+			click="paginationClickHandler(event)" />
+		
+	</s:HGroup>
+	
+	<s:HGroup 
+		visible="{ _advModel &amp;&amp; _pv.isBack }" 
+		includeInLayout="{ _advModel }"
+	>
+		<pagination:ControlButton 
+			id="btnFirst" 
+			name="1"
+			label="1" 
+			click="paginationClickHandler(event)" />
+		<s:Label text="...   " />
+	</s:HGroup>
+	
+	<pagination:PageGroup
+		itemRenderer="com.ksria.flex.pagination.itemrender.PageListItem" 
+		dataProvider="{ _pv.pagelist }" 
+		click="listClickHandler(event)" 
+	/>
+	
+	<s:HGroup 
+		visible="{ _advModel &amp;&amp; _pv.end - 1 &lt; _pv.lastpage }" 
+		includeInLayout="{ _advModel }"
+	>
+		<s:Label text="   ..." />
+		<pagination:ControlButton 
+			id="btnLast" 
+			name="{ _pv.lastpage }"
+			label="{ _pv.lastpage }" 
+			click="paginationClickHandler(event)" />
+	</s:HGroup>
+	
+	<s:HGroup>
+		
+		<pagination:ControlButton 
+			id="btnNext" 
+			name="{ _pv.page + 1 }"
+			visible="{ _pageCtrlVisible &amp;&amp; _pv.isNext }" 
+			includeInLayout="{ _pageCtrlVisible }"
+			label="{ _nextLabel }" 
+			click="paginationClickHandler(event)" />
+		
+		<pagination:ControlButton 
+			id="btnForward" 
+			name="{ _pv.forward }"
+			visible="{ _pageTurnVisible &amp;&amp; _pv.isForward }" 
+			includeInLayout="{ _pageTurnVisible }"
+			label="{ _forwardLabel }" 
+			click="paginationClickHandler(event)" />
+		
+	</s:HGroup>
+	
+	<s:HGroup 
+		verticalAlign="middle" 
+		visible="{ _pageCmbVisible }"
+		includeInLayout="{ _pageCmbVisible }"
+	>
+		
+		<s:Label text="   跳转到：" />
+		
+		<pagination:PageList 
+			prompt="{ _pv.page }" 
+			dataProvider="{ _pv.totallist }" 
+			close="dropdownlistCloseHandler(event)" />
+			
+		<s:Label text="页" />
+		
+	</s:HGroup>
+
+</s:HGroup>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<componentPackage>
+    <component id="PaginationComp" class="com.ksria.flex.pagination.PaginationComp"/>
+    <component id="ControlButton"  class="com.ksria.flex.pagination.components.ControlButton"/>
+    <component id="PageButton"     class="com.ksria.flex.pagination.components.PageButton"/>
+    <component id="PageGroup"      class="com.ksria.flex.pagination.components.PageGroup"/>
+    <component id="PageList"       class="com.ksria.flex.pagination.components.PageList"/>
+</componentPackage>

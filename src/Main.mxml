@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application 
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+    xmlns:s="library://ns.adobe.com/flex/spark"
+    xmlns:mx="library://ns.adobe.com/flex/mx" 
+>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.ksria.flex.pagination.PaginationComp;
+			import com.ksria.flex.pagination.event.PaginationEvent;
+			
+			private function pageTurningHandler( event : PaginationEvent ) : void {
+				trace( "asdfasfadsafd = " + pg.pv.page )
+				lblPage.text = '当前为：' + event.page + '页';
+			}
+			
+			private function createPagination() : void {
+				
+				pageGroup.removeAllElements();
+				lblPage.text = "";
+				
+				var page : PaginationComp = new PaginationComp();
+				
+				page.page     = int( txtPage.text );
+				page.total    = int( txtTotal.text );
+				page.pagesize = int( txtPagesize.text );
+				page.offset   = int( txtOffset.text );
+				page.length   = int( txtLength.text );
+				
+				page.backLabel     = txtBack.text;
+				page.previousLabel = txtPrevious.text;
+				page.nextLabel     = txtNext.text;
+				page.forwardLabel  = txtForward.text;
+				
+				page.pageTurnVisible = chkTurnVisible.selected;
+				page.pageCtrlVisible = chkCtrlVisible.selected;
+				page.advModel        = chkAdvModel.selected;
+				page.pageCmbVisible  = chkCmbVisible.selected;
+				
+				page.addEventListener( PaginationEvent.PAGE_TURNING, pageTurningHandler );
+				
+				pageGroup.addElement( page );
+			}
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:VerticalLayout horizontalAlign="center" paddingTop="30" gap="20" />
+	</s:layout>
+	
+	<s:VGroup paddingTop="5" gap="0">
+		<mx:LinkButton label="Flex Pagination - 基于Flex SDK 4.6.x and as-pagination开发的一套翻页组件"/>
+		<mx:LinkButton label="作者：Kenshin" click="{ navigateToURL( new URLRequest( 'http://weibo.com/23784148' ), '_blank' ); }" />
+		<mx:LinkButton label="版本：version 1.0（2012-01-08 更新）" />
+		<mx:LinkButton label="主页：http://www.k-zone.cn/project/pagination.html" click="{ navigateToURL( new URLRequest( 'http://www.k-zone.cn/project/pagination.html' ), '_blank' ); }" />
+		<mx:LinkButton label="源码：https://github.com/kenshin/flex-pagination" click="{ navigateToURL( new URLRequest( 'https://github.com/kenshin/flex-pagination' ), '_blank' ); }" />
+		<mx:LinkButton label="as-pagination地址：https://github.com/kenshin/as-pagination" click="{ navigateToURL( new URLRequest( 'https://github.com/kenshin/as-pagination' ), '_blank' ); }" />
+	</s:VGroup>
+
+	<s:HGroup>
+		
+		<s:Form>
+			<s:FormHeading label="分页组件：分页属性" />
+			<s:FormItem label="当前页" >
+				<s:TextInput id="txtPage" text="1" />
+			</s:FormItem>
+			<s:FormItem label="分页总数" >
+				<s:TextInput id="txtTotal" text="307" />
+			</s:FormItem>
+			<s:FormItem label="每页显示的数据" >
+				<s:TextInput id="txtPagesize" text="6" />
+			</s:FormItem>
+			<s:FormItem label="偏移量" >
+				<s:TextInput id="txtOffset" text="2" />
+			</s:FormItem>
+			<s:FormItem label="分页的长度" >
+				<s:TextInput id="txtLength" text="8" />
+			</s:FormItem>
+		</s:Form>
+		
+		<s:Form>
+			<s:FormHeading label="分页组件：标签属性" />
+			<s:FormItem label="后滚按钮的显示标签" >
+				<s:TextInput id="txtBack" text="后滚" />
+			</s:FormItem>
+			<s:FormItem label="后退按钮的显示标签" >
+				<s:TextInput id="txtPrevious" text="后退" />
+			</s:FormItem>
+			<s:FormItem label="前进按钮的显示标签" >
+				<s:TextInput id="txtNext" text="前进" />
+			</s:FormItem>
+			<s:FormItem label="前滚按钮的显示标签" >
+				<s:TextInput id="txtForward" text="前滚" />
+			</s:FormItem>
+		</s:Form>
+		
+		<s:Form>
+			<s:FormHeading label="分页组件：控制条属性" />
+			<s:FormItem label="是否显示前滚/后滚按钮" >
+				<s:CheckBox id="chkTurnVisible" selected="true" />
+			</s:FormItem>
+			<s:FormItem label="是否显示前进/后退按钮" >
+				<s:CheckBox id="chkCtrlVisible" selected="true" />
+			</s:FormItem>
+			<s:FormItem label="是否显示高级模式" >
+				<s:CheckBox id="chkAdvModel" selected="true" />
+			</s:FormItem>
+			<s:FormItem label="是否显示下拉列表" >
+				<s:CheckBox id="chkCmbVisible" selected="true" />
+			</s:FormItem>
+		</s:Form>
+		
+	</s:HGroup>
+	
+	<s:Button 
+		width="800" height="30"
+		label="生成分页组件" 
+		useHandCursor="true" buttonMode="true" 
+		click="createPagination()"
+	/>
+	
+	<s:Group id="pageGroup" />
+	
+	<s:Label id="lblPage" />
+	
+</s:Application>

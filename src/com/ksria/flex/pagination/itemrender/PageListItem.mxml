@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo" 
+	xmlns:pagination="com.ksria.flex.pagination.components.*"
+	width="100%" 
+	>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+	<!--
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/halo";
+		
+		.curpage {
+			color: #fff000;
+		}
+		
+		.page {
+			color: #000000;
+		}
+		
+	</fx:Style>
+	-->
+	
+	<fx:Script>
+		<![CDATA[
+			/**
+			 * check current state
+			 */
+			override public function set data( value : Object ) : void {
+				super.data = value;
+				if ( value == null )               return;
+				if ( value.page == value.curpage ) btnPage.selected = true;
+				else                               btnPage.selected = false;
+			}
+		]]>
+	</fx:Script>
+		
+	<pagination:PageButton 
+		id="btnPage" 
+		label="{ data.page }" 
+	/>
+	
+</s:ItemRenderer>
