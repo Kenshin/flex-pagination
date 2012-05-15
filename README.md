@@ -95,7 +95,8 @@ page.pageCmbVisible  = true; //是否显示下拉列表
 
 ## 更新日志：
 version 1.0 [2011-01-08]
-* 适合Flex SDK 4.6.x
+* 基于Flex SDK 4.6.x
+* 基于[page4as3lib](https://github.com/kenshin/as-pagination)
 * 适合任意Flash Player 10.x+
 * 符合UI/UE设计思想，高度定制化
 
